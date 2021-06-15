@@ -30,7 +30,7 @@ class GCSStreamUpload
     @bucket = bucket
   end
 
-  def upload(*args)
+  def upload(location, options)
     read_pipe, write_pipe = IO.pipe
     def read_pipe.pos
       0
@@ -44,7 +44,7 @@ class GCSStreamUpload
     ensure
       write_pipe.close_write
     end
-    @bucket.create_file(read_pipe, *args)
+    @bucket.create_file(read_pipe, location, **options)
     result = thread.value
     raise result if result.is_a?(StandardError)
   end
